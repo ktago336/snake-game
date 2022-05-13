@@ -175,13 +175,14 @@ void FillDots()
 
 int main()
 {
+	system("msg * \"Snake Game v1.0\"");
 	TurnOn = 1;
 	while (TurnOn==1)
 	{
 		int MenuNumber;
 		Menu:
 		system("cls");
-		cout << "ZMEIKA 1.0 \n 1.Igra \n 2.Info \n 3.Quit " << endl;
+		cout << "\n 1.Play \n 2.Info \n 3.Quit " << endl;
 	Mistake:
 		Sleep(500);
 		MenuNumber=_getch();
