@@ -182,7 +182,7 @@ int main()
 		int MenuNumber;
 		Menu:
 		system("cls");
-		cout << "\n 1.Play \n 2.Info \n 3.Quit " << endl;
+		cout << "1.Play \n2.Info \n3.Quit " << endl;
 	Mistake:
 		Sleep(500);
 		MenuNumber=_getch();
