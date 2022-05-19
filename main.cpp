@@ -13,12 +13,12 @@ bool TurnOn;
 const int FieldW = 20, FieldL = 20;
 int field[FieldW][FieldL];
 
-void ShowScreen();
+void ShowScreen(int);
 void OneStep(int GX, int GY, int Len);
 void FillDots();
 
 
-void game()	
+void game(int difficulty)	
 {
 	system("cls");
 	srand(time(0));
@@ -30,23 +30,25 @@ void game()
 	int counter=10;		//clock frequency (can be used for difficulty up), tick
 	int FieldW = 20, FieldL = 20;
 	int direction=1, HeadX=10, HeadY=5, YY=rand()%19, YX=rand()%19;
-	field[YX][YY] = -1;
+	field[YX][YY] = -1;	//apple
 	int Len = 5;
 	Sleep(1000);
 	FillDots();
 	field[YX][YY] = -1;
 	bool Ingame = 1;
+	srand(time(0));
 	while (Ingame == 1)
 	{		
 			//waiting for key button hit or keep the direction
+			OneStep(HeadX, HeadY, Len);//calling rendering and next step
 			srand(time(0));
 			counter = 10;
 			for (int i = 10; (i > 0) && (!_kbhit()); i--)
 			{
-				Sleep(50);
+				Sleep(difficulty);
 				counter--;
 			}
-			Sleep(counter*50);	//remaining tick time
+			Sleep(counter*difficulty);	//remaining tick time
 			//
 
 			//controls
@@ -76,7 +78,6 @@ void game()
 			{
 				Len++;
 				bool Yok=0;
-				srand(time(0));
 				while (Yok==0)
 				{
 					YX = rand() % 19;
@@ -88,9 +89,9 @@ void game()
 					}
 				}
 				//tail grow imideately after eating
-				for (int j = 0; j <= FieldL; j++)
+				for (int j = 0; j < FieldL; j++)
 				{
-					for (int i = 0; i <= FieldW; i++)
+					for (int i = 0; i < FieldW; i++)
 					{
 						if (field[j][i]>1)
 						field[j][i] ++;
@@ -110,7 +111,7 @@ void game()
 			}
 
 			// loose condition
-			if (HeadX > 20 || HeadX < 1 || HeadY > 20 || HeadY < 1 || field[HeadX][HeadY] >1)
+			if (HeadX > 19 || HeadX < 0 || HeadY > 19 || HeadY < 0 || field[HeadX][HeadY] >1)
 			{
 				Ingame = 0;
 
@@ -121,24 +122,25 @@ void game()
 				Sleep(1000);
 				system("cls");
 			}
-			OneStep(HeadX, HeadY, Len);//calling rendering and next step
+			
 	}
 }
 
 void OneStep(int GX, int GY, int Zlen)
 {
 	field[GX][GY] = 0;		//present head position
-	ShowScreen();			//rendering
+	ShowScreen(Zlen);			//rendering
 	field[GX][GY] = Zlen;	//present head becomes body cell with int (Len) lifetime
 }
 
 //printing function
-void ShowScreen()
+void ShowScreen(int Len)
 {
 	system("cls");
-	for (int X = 1; X <= FieldL; X++)
+	cout << "SCORE: " << Len << endl;
+	for (int X = 0; X < FieldL; X++)
 	{
-		for (int Y = 1; Y <= FieldW; Y++)
+		for (int Y = 0; Y < FieldW; Y++)
 		{
 			//empty cell 1, head 0, apple <0, body >1
 			if (field[X][Y] == 1)						//dot code 1
@@ -175,32 +177,50 @@ void FillDots()
 
 int main()
 {
-	system("msg * \"Snake Game v1.0\"");
+	int difficulty=50;
+
+	system("msg * \"Snake Game v1.1\"");
 	TurnOn = 1;
 	while (TurnOn==1)
 	{
 		int MenuNumber;
-		Menu:
+	Menu:
 		system("cls");
-		cout << "1.Play \n2.Info \n3.Quit " << endl;
+		cout << "1.Play \n2.Difficulty(current - "<<difficulty/10<<") \n3.Info \n4.Quit \n\n\n\n5.ULTRA HARD MODE" << endl;
 	Mistake:
 		Sleep(500);
 		MenuNumber=_getch();
 		if (MenuNumber == '1')
 		{
-			game();
+			game(difficulty);
 			goto Menu;
 		}
+		if (MenuNumber == '3')
+		{
+			system("cls");
+			cout << "VERSION 1.1\nWASD for control\nOnly english \n 1. Any key to menu";
+			_getch();
+			goto Menu;
+		}
+		if (MenuNumber == '4')
+			TurnOn = 0;
 		if (MenuNumber == '2')
 		{
 			system("cls");
-			cout << "VERSION 1.0\nWASD for control\nOnly english \n 1. Any key to menu";
-			int Menu;
-			Menu = _getch();
+			cout << "Enter difficulty from 5 (easy) to 1 (hard)\n";
+			cin >> difficulty;
+			if (difficulty > 5 || difficulty < 1) {
+				difficulty = 50;
 				goto Menu;
+			}
+			difficulty = difficulty * 10;
+			goto Menu;
 		}
-		if (MenuNumber == '3')
-			TurnOn = 0;
+		if (MenuNumber == '5')
+		{
+			game(1);
+			goto Menu;
+		}
 		else
 		{
 			goto Mistake;
